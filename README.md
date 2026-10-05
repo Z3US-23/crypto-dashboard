@@ -4,7 +4,7 @@
 
 An automated data pipeline that collects crypto headlines and Reddit posts every 6 hours, scores their sentiment with NLP, and compares it with market prices in an interactive dashboard.
 
-**🔗 Live dashboard:** _coming soon_
+**🔗 Live dashboard: [crypto-sentiment-dashboard.streamlit.app](https://crypto-sentiment-dashboard-5vcjnk8vieydnlappdhzayy.streamlit.app/)**
 
 ![Dashboard screenshot](assets/dashboard.png)
 

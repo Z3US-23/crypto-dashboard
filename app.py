@@ -386,4 +386,7 @@ if meta.get("sources"):
         st.caption(f"Sources unavailable in the latest run: {', '.join(failed)}")
 
 st.divider()
-st.caption("Built by Ahmad Ammar · [Source code on GitHub](https://github.com/Z3US-23/crypto-sentiment-dashboard)")
+st.caption(
+    "Built by Ahmad Ammar · [Source code on GitHub](https://github.com/Z3US-23/crypto-sentiment-dashboard) · "
+    "[GitHub profile](https://github.com/Z3US-23)"
+)
