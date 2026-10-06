@@ -15,7 +15,7 @@ An automated data pipeline that collects crypto headlines and Reddit posts every
 - **Automated data pipeline.** A scheduled GitHub Actions job collects fresh data every 6 hours and commits it to this repo, so the dataset grows on its own. No server or paid API needed.
 - **11 data sources, zero API keys.** CoinDesk, Cointelegraph, Decrypt and Google News RSS feeds, four subreddits via Reddit's public RSS, and daily prices from Yahoo Finance.
 - **NLP sentiment scoring.** VADER sentiment analysis extended with a custom crypto lexicon (*bullish*, *rekt*, *FUD*, *liquidated*, ...) that the default model doesn't understand.
-- **Interactive dashboard.** Built with Streamlit and Plotly: filter by coin, period and source; compare coins; drill into the headlines driving the mood.
+- **Interactive dashboard.** Built with Streamlit and Plotly, styled like a trading terminal: daily price candles with each day's mood underneath, a sentiment gauge, per-coin cards with sparklines, and the headlines driving the mood. Filter by coin, period and source.
 - **Honest statistics.** Days with too few items are faded or excluded, and the sentiment-vs-price correlation only appears once there are enough days of data. It comes with a clear "correlation is not causation" caveat.
 - **Production-minded collection.** Handles rate limits (it reads Reddit's `x-ratelimit-reset` header and waits), de-duplicates the same story syndicated across outlets, and keeps running if one source fails.
 
@@ -35,7 +35,7 @@ flowchart LR
     P --> APP
 ```
 
-1. **Collect.** `src/collect_news.py` and `src/collect_reddit.py` pull the latest headlines and posts; `src/collect_prices.py` pulls 180 days of daily closing prices.
+1. **Collect.** `src/collect_news.py` and `src/collect_reddit.py` pull the latest headlines and posts; `src/collect_prices.py` pulls 180 days of daily open, high, low and close prices.
 2. **Tag.** Items from general sources are assigned to a coin when they mention it by name or ticker (word-boundary regex, so "Solana" matches but "console" doesn't).
 3. **Score.** Each headline plus the first 500 characters of its summary or post body gets a VADER compound score from −1 to +1. Scores ≥ 0.05 are positive and ≤ −0.05 negative.
 4. **Store.** New rows are merged into `data/posts.csv`, de-duplicated by headline, so the same story from two outlets counts once.
@@ -55,8 +55,8 @@ flowchart LR
 ## Run it locally
 
 ```bash
-git clone https://github.com/Z3US-23/crypto-sentiment-dashboard.git
-cd crypto-sentiment-dashboard
+git clone https://github.com/Z3US-23/crypto-dashboard.git
+cd crypto-dashboard
 python -m venv .venv
 .venv\Scripts\activate          # Windows  (macOS/Linux: source .venv/bin/activate)
 pip install -r requirements.txt
@@ -68,13 +68,15 @@ streamlit run app.py            # open http://localhost:8501
 ## Project structure
 
 ```
-crypto-sentiment-dashboard/
+crypto-dashboard/
 ├── app.py                     # Streamlit dashboard
+├── assets/theme.css           # dashboard styling (dark trading-terminal look)
+├── .streamlit/config.toml     # Streamlit theme: colours and font
 ├── src/
 │   ├── config.py              # coins, keywords, feeds, file paths
 │   ├── collect_news.py        # news RSS + Google News
 │   ├── collect_reddit.py      # Reddit RSS with rate-limit handling
-│   ├── collect_prices.py      # Yahoo Finance daily closes
+│   ├── collect_prices.py      # Yahoo Finance daily OHLC prices
 │   ├── sentiment.py           # VADER + crypto lexicon
 │   ├── text_utils.py          # HTML cleaning, coin tagging, de-dup ids
 │   └── pipeline.py            # one full collection run

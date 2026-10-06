@@ -49,7 +49,7 @@ def update_prices(status: dict) -> None:
     if prices.empty:
         status["Yahoo Finance"] = "failed: empty response"
         return
-    prices["close"] = prices["close"].round(4)
+    prices[["open", "high", "low", "close"]] = prices[["open", "high", "low", "close"]].round(4)
     prices.to_csv(PRICES_CSV, index=False)
     status["Yahoo Finance"] = f"ok ({len(prices)})"
 
